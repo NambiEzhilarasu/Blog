@@ -1,0 +1,83 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const articles = (await getCollection("articles")).sort(
+  (a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf(),
+);
+const dateFormatter = new Intl.DateTimeFormat("en", {
+  day: "2-digit",
+  month: "short",
+  year: "numeric",
+});
+---
+
+<BaseLayout>
+  <section class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow"><span class="eyebrow-line"></span> TECHNICAL JOURNAL <span class="eyebrow-year">— VOL. 01</span></p>
+      <h1>Ideas, engineered<br />to <span>go further.</span></h1>
+      <p class="hero-caption">A collection of technical notes, explorations, and things worth understanding.</p>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <div class="hero-art-ring ring-one"></div>
+      <div class="hero-art-ring ring-two"></div>
+      <div class="hero-art-ring ring-three"></div>
+      <div class="hero-art-center">NE<span>.</span></div>
+      <span class="hero-art-label label-top">FIELD NOTES / 01</span>
+      <span class="hero-art-label label-bottom">ENGINEERING · SYSTEMS · IDEAS</span>
+      <span class="hero-art-cross cross-one">+</span>
+      <span class="hero-art-cross cross-two">+</span>
+    </div>
+    <div class="hero-bottom">
+      <span>WRITTEN BY <strong>NAMBI EZHILARASU</strong></span>
+      <span class="scroll-hint"><span class="scroll-line"></span> SCROLL TO EXPLORE</span>
+    </div>
+  </section>
+
+  <section class="journal-section" aria-labelledby="journal-heading">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow"><span class="eyebrow-line"></span> THE JOURNAL</p>
+        <h2 id="journal-heading">Latest <span>articles</span></h2>
+      </div>
+      <span class="article-count">{String(articles.length).padStart(2, "0")} / ENTRIES</span>
+    </div>
+
+    {articles.length > 0 ? (
+      <div class="article-grid">
+        {articles.map((article, index) => (
+          <a class="article-card" href={`/articles/${article.id}/`}>
+            <div class="article-card-image">
+              {article.data.coverImage ? (
+                <img src={article.data.coverImage} alt="" loading="lazy" />
+              ) : (
+                <div class="article-image-placeholder" aria-hidden="true">
+                  <span class="placeholder-number">{String(index + 1).padStart(2, "0")}</span>
+                  <span class="placeholder-mark">NE<span>.</span></span>
+                  <span class="placeholder-grid"></span>
+                </div>
+              )}
+              <span class="article-arrow" aria-hidden="true">↗</span>
+            </div>
+            <div class="article-meta">
+              <time datetime={article.data.publishedAt.toISOString()}>
+                {dateFormatter.format(article.data.publishedAt)}
+              </time>
+              <span>{article.data.tags[0] ?? "ARTICLE"}</span>
+            </div>
+            <h3>{article.data.title}</h3>
+            <p class="article-description">{article.data.description}</p>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <div class="empty-state">
+        <span class="empty-state-number">01—00</span>
+        <span class="empty-state-mark" aria-hidden="true">+</span>
+        <p>No articles on the grid yet.</p>
+        <span class="empty-state-note">New writing will appear here.</span>
+      </div>
+    )}
+  </section>
+</BaseLayout>

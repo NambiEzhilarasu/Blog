@@ -1,0 +1,36 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export async function getStaticPaths() {
+  const articles = await getCollection("articles");
+  return articles.map((article) => ({
+    params: { slug: article.id },
+    props: { article },
+  }));
+}
+
+const { article } = Astro.props;
+const { Content } = await render(article);
+const dateFormatter = new Intl.DateTimeFormat("en", {
+  day: "2-digit",
+  month: "long",
+  year: "numeric",
+});
+---
+
+<BaseLayout title={`${article.data.title} — Nambi Ezhilarasu`} description={article.data.description}>
+  <article class="article-page">
+    <a class="back-link" href="/">← BACK TO JOURNAL</a>
+    <header class="article-header">
+      <p class="eyebrow"><span class="eyebrow-line"></span> {article.data.tags.join(" · ") || "ARTICLE"}</p>
+      <h1>{article.data.title}</h1>
+      <p class="article-lede">{article.data.description}</p>
+      <time datetime={article.data.publishedAt.toISOString()}>
+        {dateFormatter.format(article.data.publishedAt)}
+      </time>
+      {article.data.coverImage && <img class="article-cover" src={article.data.coverImage} alt="" />}
+    </header>
+    <div class="prose"><Content /></div>
+  </article>
+</BaseLayout>
