@@ -14,6 +14,11 @@ and article routes are ready; no articles or personal biography have been added.
 6. Run `npm run dev` to preview. Astro discovers the Markdown file, creates its
    article page, and includes it on the homepage automatically.
 
+Adding a Markdown file does not require changing the site code. The live site
+must still be rebuilt and redeployed to show the new post; ask Copilot to
+publish after adding it. Once the GitHub repository is connected to Vercel,
+pushes can trigger deployments automatically.
+
 Required frontmatter: `title`, `description`, and `publishedAt` (`YYYY-MM-DD`).
 Optional fields: `tags` (a list) and `coverImage` (a path beginning with `/`).
 The homepage sorts entries by publication date, newest first.
