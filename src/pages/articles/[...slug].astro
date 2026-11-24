@@ -29,13 +29,6 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
       <time datetime={article.data.publishedAt.toISOString()}>
         {dateFormatter.format(article.data.publishedAt)}
       </time>
-      {article.data.coverImage && (
-        <img
-          class="article-cover"
-          src={article.data.coverImage}
-          alt={article.data.coverImageAlt ?? article.data.title}
-        />
-      )}
     </header>
     <div class="prose"><Content /></div>
     <section class="comments-section" data-article={article.id} aria-labelledby="comments-heading">
