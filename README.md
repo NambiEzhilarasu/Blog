@@ -1,42 +1,99 @@
 # Nambi Ezhilarasu — Technical Journal
 
-An F1-inspired, static technical blog built with Astro. The homepage, About page,
-and article routes are ready; no articles or personal biography have been added.
+An F1-inspired technical blog built with Astro. New posts are discovered
+automatically from Markdown files. **For each post, add a Markdown file and
+optional images; you do not need to edit the website code or create a new page.**
 
-## Add an article
+## Add a post
 
 1. Copy `templates/article-template.md` into `src/content/articles/`.
-2. Rename it to a URL-friendly name, such as `memory-safety-notes.md`.
-3. Fill in the frontmatter and write the article below the second `---`.
-4. Put article images in `public/images/articles/`.
-5. Reference images with a site path, for example
-   `![Diagram](/images/articles/diagram.png)`.
-6. Run `npm run dev` to preview. Astro discovers the Markdown file, creates its
-   article page, and includes it on the homepage automatically.
+2. Rename the copy to a URL-friendly name, for example
+   `memory-safety-notes.md`. This becomes `/articles/memory-safety-notes/`.
+3. Update the title, summary, date, and optional tags at the top of the file.
+   Keep the required fields and the `---` separators.
+4. Write the article below the frontmatter using Markdown.
+5. To include images, copy them into `public/images/articles/` and use a
+   site-root path in the post, such as
+   `![Safety flowchart](/images/articles/safety-flowchart.png)`.
+6. Preview the site locally, then publish it using the instructions below.
 
-Adding a Markdown file does not require changing the site code. The live site
-must still be rebuilt and redeployed to show the new post; ask Copilot to
-publish after adding it. Once the GitHub repository is connected to Vercel,
-pushes can trigger deployments automatically.
+### Article metadata
 
-Required frontmatter: `title`, `description`, and `publishedAt` (`YYYY-MM-DD`).
-Optional fields: `tags` (a list) and `coverImage` (a path beginning with `/`).
-The homepage sorts entries by publication date, newest first.
+```yaml
+---
+title: "Memory Safety Notes"
+description: "A short summary shown on the homepage and article page."
+publishedAt: 2026-11-24
+tags:
+  - Embedded Systems
+  - Functional Safety
+# Optional: used as the article card image and at the top of the article.
+# coverImage: /images/articles/memory-safety-cover.png
+---
+```
 
-## Run locally
+`title`, `description`, and `publishedAt` are required. Use the date format
+`YYYY-MM-DD`. `tags` and `coverImage` are optional; the first tag appears on the
+homepage card. A Markdown image in the article body is separate from the
+optional cover image.
+
+### Write the article
+
+Use ordinary Markdown for headings, paragraphs, lists, links, images, and code:
+
+```md
+## Overview
+
+Write your introduction here.
+
+### Key considerations
+
+- First point
+- Second point
+
+![Describe the image](/images/articles/example-diagram.png)
+```
+
+The homepage lists posts newest first. Astro creates each article page and
+updates the homepage from the files in `src/content/articles/` during the
+standard site build.
+
+## Preview locally
+
+Node.js `22.23.4` or newer is required. Install dependencies once, from the
+website folder:
 
 ```sh
 npm install
 npm run dev
 ```
 
-## Build
+Open the local URL printed by Astro. Stop the preview server with `Ctrl+C`.
+
+To check a production build locally:
 
 ```sh
 npm run build
 npm run preview
 ```
 
-Keep the project and its `src/content/articles/` and `public/images/articles/`
-folders under `C:\Users\NambiEzhilarasu\Desktop\Article` so posts and images
-stay alongside the website source.
+## Publish a post
+
+Adding a Markdown file does not change the live site until a new deployment is
+made. The current Vercel project is deployed directly and is not connected to
+GitHub for automatic deployments. After adding a post, ask Copilot:
+
+> Build and deploy my latest blog post to Vercel.
+
+This rebuilds the site with the new article; it does not require regenerating or
+editing the website code. Once GitHub is connected to Vercel, publishing can
+instead happen automatically when changes are pushed.
+
+## Where files go
+
+- Articles: `src/content/articles/`
+- Article images: `public/images/articles/`
+- Reusable post format: `templates/article-template.md`
+
+Keep the project under `C:\Users\NambiEzhilarasu\Desktop\Article` so the
+website, posts, and images stay together.

@@ -39,7 +39,7 @@ strategy must still ensure that safety-critical failures are addressed.
 The flow below shows a process for selecting safety mechanisms for an ASIL A
 system.
 
-![Flowchart for selecting safety mechanisms for an ASIL A system](/images/articles/asil-a-safety-mechanism-selection-optimized.png)
+![Flowchart for selecting safety mechanisms for an ASIL A system](/images/articles/asil-a-safety-mechanism-selection.svg)
 
 ## Wrap-up
 

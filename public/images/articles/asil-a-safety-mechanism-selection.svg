@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1000" role="img" aria-labelledby="title description">
+  <title id="title">ASIL A safety mechanism selection flow</title>
+  <desc id="description">A flowchart for screening safety mechanisms and safety manual constraints and assumptions before deriving technical safety requirements.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0 0 10 5 0 10Z" fill="#e10600" />
+    </marker>
+    <style>
+      text { font-family: Arial, sans-serif; fill: #f2f1ed; font-size: 17px; text-anchor: middle; }
+      .flow { fill: none; stroke: #e10600; stroke-width: 2; marker-end: url(#arrow); }
+      .step { fill: #183143; stroke: #7e9ab0; stroke-width: 2; }
+      .decision { fill: #332b19; stroke: #e6b842; stroke-width: 2; }
+      .exclude { fill: #222326; stroke: #65666a; stroke-width: 2; }
+      .result { fill: #1d3828; stroke: #67a67a; stroke-width: 2; }
+      .label { font-size: 14px; fill: #f2f1ed; }
+    </style>
+  </defs>
+
+  <rect class="step" x="50" y="75" width="240" height="82" rx="8" />
+  <text x="170" y="108"><tspan x="170">Safety manual from</tspan><tspan x="170" dy="23">semiconductor vendor</tspan></text>
+
+  <path class="flow" d="M290 116 H490" />
+  <rect class="step" x="490" y="65" width="420" height="102" rx="8" />
+  <text x="700" y="98"><tspan x="700">List safety mechanisms from the safety manual</tspan><tspan x="700" dy="23">and record their characteristics.</tspan></text>
+
+  <path class="flow" d="M170 157 V300" />
+  <rect class="step" x="50" y="300" width="360" height="92" rx="8" />
+  <text x="230" y="336"><tspan x="230">List the Functional Safety Constraints</tspan><tspan x="230" dy="23">and Assumptions from the Safety Manual.</tspan></text>
+  <path class="flow" d="M230 392 V420" />
+
+  <path class="flow" d="M700 167 V185" />
+  <polygon class="decision" points="700,185 880,250 700,315 520,250" />
+  <text x="700" y="242"><tspan x="700">Related to non-safety or</tspan><tspan x="700" dy="23">unused peripherals?</tspan></text>
+  <path class="flow" d="M880 250 H925" />
+  <text class="label" x="900" y="238">Yes</text>
+  <rect class="exclude" x="930" y="210" width="250" height="80" rx="8" />
+  <text x="1055" y="232"><tspan x="1055">Exclude mechanisms for</tspan><tspan x="1055" dy="20">non-safety or unused</tspan><tspan x="1055" dy="20">peripherals.</tspan></text>
+  <path class="flow" d="M700 315 V345" />
+  <text class="label" x="720" y="336">No</text>
+
+  <polygon class="decision" points="700,345 880,410 700,475 520,410" />
+  <text x="700" y="402"><tspan x="700">Covering latent</tspan><tspan x="700" dy="23">faults?</tspan></text>
+  <path class="flow" d="M880 410 H925" />
+  <text class="label" x="900" y="398">Yes</text>
+  <rect class="exclude" x="930" y="370" width="250" height="80" rx="8" />
+  <text x="1055" y="400"><tspan x="1055">Exclude mechanisms</tspan><tspan x="1055" dy="23">covering latent faults.</tspan></text>
+  <path class="flow" d="M700 475 V505" />
+  <text class="label" x="720" y="496">No</text>
+
+  <polygon class="decision" points="700,505 880,575 700,645 520,575" />
+  <text x="700" y="559"><tspan x="700">Alternative system-level detection</tspan><tspan x="700" dy="23">for a single-point fault?</tspan></text>
+  <path class="flow" d="M880 575 H925" />
+  <text class="label" x="900" y="563">Yes</text>
+  <rect class="exclude" x="930" y="535" width="250" height="80" rx="8" />
+  <text x="1055" y="565"><tspan x="1055">Exclude faults detected</tspan><tspan x="1055" dy="23">at system level.</tspan></text>
+  <path class="flow" d="M700 645 V690" />
+  <text class="label" x="720" y="674">No</text>
+
+  <rect class="result" x="570" y="690" width="260" height="80" rx="8" />
+  <text x="700" y="723"><tspan x="700">Final list of safety</tspan><tspan x="700" dy="23">mechanisms.</tspan></text>
+
+  <polygon class="decision" points="230,420 410,490 230,560 50,490" />
+  <text x="230" y="481"><tspan x="230">Are the constraints and assumptions</tspan><tspan x="230" dy="23">applicable to the system?</tspan></text>
+  <path class="flow" d="M50 490 H5 V875 H10" />
+  <text class="label" x="30" y="478">No</text>
+  <rect class="exclude" x="10" y="835" width="190" height="80" rx="8" />
+  <text x="105" y="865"><tspan x="105">Exclude constraints</tspan><tspan x="105" dy="23">and assumptions.</tspan></text>
+  <path class="flow" d="M230 560 V625" />
+  <text class="label" x="250" y="600">Yes</text>
+  <rect class="result" x="110" y="630" width="240" height="80" rx="8" />
+  <text x="230" y="663"><tspan x="230">Final list of constraints</tspan><tspan x="230" dy="23">and assumptions.</tspan></text>
+
+  <path class="flow" d="M700 770 V855" />
+  <path class="flow" d="M230 710 V840 H490 V855" />
+  <rect class="step" x="410" y="860" width="490" height="95" rx="8" />
+  <text x="655" y="897"><tspan x="655">Derive and add safety requirements for mechanisms,</tspan><tspan x="655" dy="23">constraints, and assumptions to the TSRs.</tspan></text>
+</svg>
