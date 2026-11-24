@@ -3,13 +3,69 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
 <BaseLayout title="About — Nambi Ezhilarasu">
-  <section class="simple-page">
-    <p class="eyebrow"><span class="eyebrow-line"></span> THE DRIVER</p>
-    <h1>About<span>.</span></h1>
-    <div class="about-frame" aria-label="About page content">
-      <span class="frame-index">PROFILE / 00</span>
-      <span class="frame-mark" aria-hidden="true">NE<span>.</span></span>
-      <span class="frame-coordinate">CONTENT TO FOLLOW</span>
+  <section class="simple-page about-page">
+    <p class="eyebrow"><span class="eyebrow-line"></span> CAREER TIMELINE</p>
+    <h1>Nambi Ezhilarasu<span>.</span></h1>
+    <p class="about-intro">I write about Functional Safety, ASPICE and Automotive R&amp;D.</p>
+
+    <div class="timeline-heading">
+      <span>MY RACING LINE</span>
+      <span>CAREER / 2023—NOW</span>
     </div>
+
+    <ol class="career-timeline" aria-label="Career timeline">
+      <li class="career-stop">
+        <span class="career-stop-number" aria-hidden="true">01</span>
+        <article class="career-card">
+          <div class="career-card-top">
+            <p class="career-period">
+              <time datetime="2023-05">MAY 2023</time>
+              <span aria-hidden="true">—</span>
+              <time datetime="2024-05">MAY 2024</time>
+            </p>
+            <span class="career-status">STINT 01</span>
+          </div>
+          <h2>Tata Elxsi</h2>
+          <p class="career-location">TRIVANDRUM</p>
+          <p class="career-role">HIL Validation Engineer</p>
+        </article>
+      </li>
+
+      <li class="career-stop">
+        <span class="career-stop-number" aria-hidden="true">02</span>
+        <article class="career-card">
+          <div class="career-card-top">
+            <p class="career-period">
+              <time datetime="2024-05">MAY 2024</time>
+              <span aria-hidden="true">—</span>
+              <time datetime="2025-05">MAY 2025</time>
+            </p>
+            <span class="career-status">STINT 02</span>
+          </div>
+          <h2>Mahindra &amp; Mahindra Ltd.</h2>
+          <p class="career-employer-note">Deputed by Tata Elxsi</p>
+          <div class="career-roles">
+            <p><span>BEV</span> Vehicle Validation Engineer</p>
+            <p><span>HEV</span> Functional Safety Engineer</p>
+          </div>
+        </article>
+      </li>
+
+      <li class="career-stop is-current">
+        <span class="career-stop-number" aria-hidden="true">03</span>
+        <article class="career-card">
+          <div class="career-card-top">
+            <p class="career-period">
+              <time datetime="2025-06">JUNE 2025</time>
+              <span aria-hidden="true">—</span>
+              <span>PRESENT</span>
+            </p>
+            <span class="career-status">CURRENT STINT</span>
+          </div>
+          <h2>Drivvize</h2>
+          <p class="career-role">Functional Safety Engineer</p>
+        </article>
+      </li>
+    </ol>
   </section>
 </BaseLayout>
