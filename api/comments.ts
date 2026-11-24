@@ -1,4 +1,4 @@
-import { addComment, getComments, isValidArticleSlug } from "../src/lib/comments";
+import { addComment, getComments, isValidArticleSlug } from "../src/lib/comments.js";
 
 const recentPosts = new Map<string, { count: number; resetAt: number }>();
 const maxNameLength = 60;

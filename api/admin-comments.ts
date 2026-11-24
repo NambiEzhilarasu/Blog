@@ -1,5 +1,5 @@
 import { timingSafeEqual } from "node:crypto";
-import { addReply, getAllComments, isValidArticleSlug, removeComment } from "../src/lib/comments";
+import { addReply, getAllComments, isValidArticleSlug, removeComment } from "../src/lib/comments.js";
 
 const maxReplyLength = 2000;
 
