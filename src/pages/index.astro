@@ -46,18 +46,10 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
 
     {articles.length > 0 ? (
       <div class="article-grid">
-        {articles.map((article, index) => (
+        {articles.map((article) => (
           <a class="article-card" href={`/articles/${article.id}/`}>
             <div class="article-card-image">
-              {article.data.coverImage ? (
-                <img src={article.data.coverImage} alt="" loading="lazy" />
-              ) : (
-                <div class="article-image-placeholder" aria-hidden="true">
-                  <span class="placeholder-number">{String(index + 1).padStart(2, "0")}</span>
-                  <span class="placeholder-mark">NE<span>.</span></span>
-                  <span class="placeholder-grid"></span>
-                </div>
-              )}
+              <h3 class="article-image-title">{article.data.title}</h3>
               <span class="article-arrow" aria-hidden="true">↗</span>
             </div>
             <div class="article-meta">
@@ -66,7 +58,6 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
               </time>
               <span>{article.data.tags[0] ?? "ARTICLE"}</span>
             </div>
-            <h3>{article.data.title}</h3>
             <p class="article-description">{article.data.description}</p>
           </a>
         ))}
