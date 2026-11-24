@@ -29,8 +29,176 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
       <time datetime={article.data.publishedAt.toISOString()}>
         {dateFormatter.format(article.data.publishedAt)}
       </time>
-      {article.data.coverImage && <img class="article-cover" src={article.data.coverImage} alt="" />}
+      {article.data.coverImage && (
+        <img
+          class="article-cover"
+          src={article.data.coverImage}
+          alt={article.data.coverImageAlt ?? article.data.title}
+        />
+      )}
     </header>
     <div class="prose"><Content /></div>
+    <section class="comments-section" data-article={article.id} aria-labelledby="comments-heading">
+      <p class="eyebrow"><span class="eyebrow-line"></span> DISCUSSION</p>
+      <h2 id="comments-heading">Comments</h2>
+      <p class="comments-intro">Share your thoughts or ask a question about this article.</p>
+      <form class="comment-form" id="comment-form">
+        <label for="comment-name">Name</label>
+        <input id="comment-name" name="name" type="text" maxlength="60" autocomplete="nickname" required />
+        <label for="comment-content">Comment</label>
+        <textarea id="comment-content" name="content" rows="5" maxlength="2000" required></textarea>
+        <div class="comment-honeypot" aria-hidden="true">
+          <label for="comment-website">Leave this field empty</label>
+          <input id="comment-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+        <button class="comment-submit" type="submit">Post comment</button>
+        <p class="comment-form-status" id="comment-form-status" role="status" aria-live="polite"></p>
+      </form>
+      <div class="comment-list" id="comment-list" aria-live="polite"></div>
+      <noscript><p class="comments-not-configured">Enable JavaScript to load and post comments.</p></noscript>
+    </section>
   </article>
 </BaseLayout>
+
+<script>
+  interface CommentReply {
+    author: string;
+    content: string;
+    createdAt: string;
+  }
+
+  interface CommentThread {
+    id: string;
+    name: string;
+    content: string;
+    createdAt: string;
+    replies: CommentReply[];
+  }
+
+  interface CommentsResponse {
+    comments: CommentThread[];
+    error?: string;
+  }
+
+  const commentsSection = document.querySelector<HTMLElement>(".comments-section");
+  const commentForm = document.querySelector<HTMLFormElement>("#comment-form");
+  const commentList = document.querySelector<HTMLElement>("#comment-list");
+  const commentStatus = document.querySelector<HTMLElement>("#comment-form-status");
+  const articleSlug = commentsSection?.dataset.article;
+
+  function displayDate(value: string): string {
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? value : date.toLocaleString();
+  }
+
+  function createCommentNode(thread: CommentThread): HTMLElement {
+    const item = document.createElement("article");
+    item.className = "comment-item";
+
+    const header = document.createElement("div");
+    header.className = "comment-item-header";
+    const name = document.createElement("strong");
+    name.textContent = thread.name;
+    const time = document.createElement("time");
+    time.dateTime = thread.createdAt;
+    time.textContent = displayDate(thread.createdAt);
+    header.append(name, time);
+
+    const content = document.createElement("p");
+    content.className = "comment-item-content";
+    content.textContent = thread.content;
+    item.append(header, content);
+
+    for (const reply of thread.replies) {
+      const replyItem = document.createElement("article");
+      replyItem.className = "comment-reply";
+      const replyHeader = document.createElement("div");
+      replyHeader.className = "comment-item-header";
+      const replyAuthor = document.createElement("strong");
+      replyAuthor.textContent = reply.author;
+      const replyTime = document.createElement("time");
+      replyTime.dateTime = reply.createdAt;
+      replyTime.textContent = displayDate(reply.createdAt);
+      replyHeader.append(replyAuthor, replyTime);
+      const replyContent = document.createElement("p");
+      replyContent.className = "comment-item-content";
+      replyContent.textContent = reply.content;
+      replyItem.append(replyHeader, replyContent);
+      item.append(replyItem);
+    }
+
+    return item;
+  }
+
+  async function loadComments(): Promise<void> {
+    if (!commentList || !articleSlug) {
+      return;
+    }
+    commentList.textContent = "Loading comments…";
+
+    try {
+      const response = await fetch(`/api/comments?article=${encodeURIComponent(articleSlug)}`, {
+        headers: { Accept: "application/json" },
+      });
+      const result = (await response.json()) as CommentsResponse;
+      if (!response.ok) {
+        throw new Error(result.error || "Comments could not be loaded.");
+      }
+
+      commentList.replaceChildren();
+      if (result.comments.length === 0) {
+        commentList.textContent = "No comments yet. Start the conversation.";
+        return;
+      }
+      for (const thread of result.comments) {
+        commentList.append(createCommentNode(thread));
+      }
+    } catch (error) {
+      commentList.textContent =
+        error instanceof Error ? error.message : "Comments could not be loaded. Please try again.";
+    }
+  }
+
+  commentForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!commentForm || !commentStatus || !articleSlug) {
+      return;
+    }
+
+    const formData = new FormData(commentForm);
+    const submitButton = commentForm.querySelector<HTMLButtonElement>("button[type=submit]");
+    if (!submitButton) {
+      return;
+    }
+    submitButton.disabled = true;
+    commentStatus.textContent = "Posting your comment…";
+
+    try {
+      const response = await fetch("/api/comments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          article: articleSlug,
+          name: String(formData.get("name") ?? ""),
+          content: String(formData.get("content") ?? ""),
+          website: String(formData.get("website") ?? ""),
+        }),
+      });
+      const result = (await response.json()) as { error?: string };
+      if (!response.ok) {
+        throw new Error(result.error || "Your comment could not be posted.");
+      }
+
+      commentForm.reset();
+      commentStatus.textContent = "Your comment has been posted.";
+      await loadComments();
+    } catch (error) {
+      commentStatus.textContent =
+        error instanceof Error ? error.message : "Your comment could not be posted. Please try again.";
+    } finally {
+      submitButton.disabled = false;
+    }
+  });
+
+  void loadComments();
+</script>

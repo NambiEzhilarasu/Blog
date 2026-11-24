@@ -6,6 +6,8 @@ tags:
   - Functional Safety
   - ISO 26262
   - ASIL A
+coverImage: /images/articles/asil-a-hw-metrics.png
+coverImageAlt: "Flowchart for selecting safety mechanisms in an ASIL A system"
 ---
 
 ## Context

@@ -1,0 +1,229 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Comment moderation — Nambi Ezhilarasu" description="Manage article comments and replies.">
+  <main class="admin-comments-page">
+    <p class="eyebrow"><span class="eyebrow-line"></span> SITE ADMIN</p>
+    <h1>Comment moderation</h1>
+    <p class="admin-comments-intro">
+      Sign in with the admin password configured in Vercel to reply to or remove comments.
+    </p>
+    <form class="admin-login-form" id="admin-login-form">
+      <label for="admin-password">Admin password</label>
+      <input id="admin-password" type="password" autocomplete="current-password" required />
+      <button class="comment-submit" type="submit">Load comments</button>
+      <button class="admin-logout" id="admin-logout" type="button" hidden>Log out</button>
+    </form>
+    <p class="admin-status" id="admin-status" role="status" aria-live="polite"></p>
+    <div class="admin-comment-list" id="admin-comment-list"></div>
+  </main>
+</BaseLayout>
+
+<script>
+  interface AdminReply {
+    author: string;
+    content: string;
+    createdAt: string;
+  }
+
+  interface AdminThread {
+    id: string;
+    article: string;
+    name: string;
+    content: string;
+    createdAt: string;
+    replies: AdminReply[];
+  }
+
+  interface AdminResponse {
+    comments?: AdminThread[];
+    error?: string;
+  }
+
+  const loginForm = document.querySelector<HTMLFormElement>("#admin-login-form");
+  const passwordInput = document.querySelector<HTMLInputElement>("#admin-password");
+  const logoutButton = document.querySelector<HTMLButtonElement>("#admin-logout");
+  const adminStatus = document.querySelector<HTMLElement>("#admin-status");
+  const adminCommentList = document.querySelector<HTMLElement>("#admin-comment-list");
+  let adminPassword = "";
+
+  function displayDate(value: string): string {
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? value : date.toLocaleString();
+  }
+
+  async function sendAdminRequest(
+    method: "GET" | "POST",
+    body?: Record<string, string>,
+  ): Promise<AdminResponse> {
+    const response = await fetch("/api/admin-comments", {
+      method,
+      headers: {
+        Authorization: `Bearer ${adminPassword}`,
+        ...(body ? { "Content-Type": "application/json" } : {}),
+      },
+      ...(body ? { body: JSON.stringify(body) } : {}),
+    });
+    const result = (await response.json()) as AdminResponse;
+    if (!response.ok) {
+      throw new Error(result.error || "The admin request failed.");
+    }
+    return result;
+  }
+
+  function createTextElement<K extends keyof HTMLElementTagNameMap>(
+    tag: K,
+    className: string,
+    text: string,
+  ): HTMLElementTagNameMap[K] {
+    const element = document.createElement(tag);
+    element.className = className;
+    element.textContent = text;
+    return element;
+  }
+
+  function createAdminThread(thread: AdminThread): HTMLElement {
+    const item = document.createElement("article");
+    item.className = "admin-comment-item";
+
+    const heading = document.createElement("div");
+    heading.className = "admin-comment-heading";
+    const time = createTextElement("time", "", displayDate(thread.createdAt));
+    time.dateTime = thread.createdAt;
+    heading.append(createTextElement("strong", "", thread.name), time);
+    item.append(
+      heading,
+      createTextElement("p", "admin-comment-article", `/articles/${thread.article}/`),
+      createTextElement("p", "comment-item-content", thread.content),
+    );
+
+    for (const reply of thread.replies) {
+      const replyItem = document.createElement("article");
+      replyItem.className = "comment-reply";
+      const replyHeading = document.createElement("div");
+      replyHeading.className = "admin-comment-heading";
+      const replyTime = createTextElement("time", "", displayDate(reply.createdAt));
+      replyTime.dateTime = reply.createdAt;
+      replyHeading.append(createTextElement("strong", "", reply.author), replyTime);
+      replyItem.append(replyHeading, createTextElement("p", "comment-item-content", reply.content));
+      item.append(replyItem);
+    }
+
+    const replyForm = document.createElement("form");
+    replyForm.className = "admin-reply-form";
+    const replyLabel = createTextElement("label", "", "Your reply");
+    const replyInput = document.createElement("textarea");
+    replyInput.rows = 3;
+    replyInput.maxLength = 2000;
+    replyInput.required = true;
+    replyInput.id = `reply-${thread.id}`;
+    replyLabel.htmlFor = replyInput.id;
+    replyForm.append(replyLabel, replyInput);
+    const actions = document.createElement("div");
+    actions.className = "admin-comment-actions";
+    const replyButton = createTextElement("button", "comment-submit", "Reply");
+    replyButton.setAttribute("type", "submit");
+    const deleteButton = createTextElement("button", "admin-delete", "Remove comment");
+    deleteButton.setAttribute("type", "button");
+    actions.append(replyButton, deleteButton);
+    replyForm.append(actions);
+
+    replyForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const content = replyInput.value.trim();
+      if (!content) {
+        return;
+      }
+      replyButton.disabled = true;
+      try {
+        await sendAdminRequest("POST", {
+          action: "reply",
+          article: thread.article,
+          commentId: thread.id,
+          content,
+        });
+        await loadAdminComments();
+      } catch (error) {
+        setAdminStatus(error instanceof Error ? error.message : "The reply could not be saved.");
+      } finally {
+        replyButton.disabled = false;
+      }
+    });
+
+    deleteButton.addEventListener("click", async () => {
+      if (!window.confirm("Remove this comment and its replies?")) {
+        return;
+      }
+      deleteButton.disabled = true;
+      try {
+        await sendAdminRequest("POST", {
+          action: "delete",
+          article: thread.article,
+          commentId: thread.id,
+        });
+        await loadAdminComments();
+      } catch (error) {
+        setAdminStatus(error instanceof Error ? error.message : "The comment could not be removed.");
+      } finally {
+        deleteButton.disabled = false;
+      }
+    });
+
+    item.append(replyForm);
+    return item;
+  }
+
+  function setAdminStatus(message: string): void {
+    if (adminStatus) {
+      adminStatus.textContent = message;
+    }
+  }
+
+  async function loadAdminComments(): Promise<void> {
+    if (!adminCommentList) {
+      return;
+    }
+    setAdminStatus("Loading comments…");
+    try {
+      const result = await sendAdminRequest("GET");
+      const comments = result.comments ?? [];
+      adminCommentList.replaceChildren();
+      if (comments.length === 0) {
+        adminCommentList.textContent = "There are no comments to moderate yet.";
+      } else {
+        for (const thread of comments) {
+          adminCommentList.append(createAdminThread(thread));
+        }
+      }
+      setAdminStatus(`${comments.length} comment${comments.length === 1 ? "" : "s"} loaded.`);
+      if (logoutButton) {
+        logoutButton.hidden = false;
+      }
+    } catch (error) {
+      adminPassword = "";
+      if (logoutButton) {
+        logoutButton.hidden = true;
+      }
+      setAdminStatus(error instanceof Error ? error.message : "Comments could not be loaded.");
+      adminCommentList.replaceChildren();
+    }
+  }
+
+  loginForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!passwordInput) {
+      return;
+    }
+    adminPassword = passwordInput.value;
+    passwordInput.value = "";
+    await loadAdminComments();
+  });
+
+  logoutButton?.addEventListener("click", () => {
+    adminPassword = "";
+    logoutButton.hidden = true;
+    adminCommentList?.replaceChildren();
+    setAdminStatus("You are signed out.");
+  });
+</script>

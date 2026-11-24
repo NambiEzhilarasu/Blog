@@ -29,13 +29,15 @@ tags:
   - Functional Safety
 # Optional: used as the article card image and at the top of the article.
 # coverImage: /images/articles/memory-safety-cover.png
+# Optional: accessibility description for the cover image.
+# coverImageAlt: "A flowchart showing the safety analysis process"
 ---
 ```
 
 `title`, `description`, and `publishedAt` are required. Use the date format
-`YYYY-MM-DD`. `tags` and `coverImage` are optional; the first tag appears on the
-homepage card. A Markdown image in the article body is separate from the
-optional cover image.
+`YYYY-MM-DD`. `tags`, `coverImage`, and `coverImageAlt` are optional; the first
+tag appears on the homepage card. A Markdown image in the article body is
+separate from the optional cover image.
 
 ### Write the article
 
@@ -88,6 +90,17 @@ GitHub for automatic deployments. After adding a post, ask Copilot:
 This rebuilds the site with the new article; it does not require regenerating or
 editing the website code. Once GitHub is connected to Vercel, publishing can
 instead happen automatically when changes are pushed.
+
+## Comments
+
+Article comments are stored in the project's private Vercel Blob store. Visitors
+can post with a display name without signing in. The owner can reply to or remove
+comments at `/admin/comments/`.
+
+Set `COMMENTS_ADMIN_PASSWORD` in the Vercel project's Production environment
+variables. Use a unique password with at least 20 characters; do not put it in
+source control. Redeploy after adding or changing the password. The Blob store's
+read/write token is managed by Vercel and must remain server-side.
 
 ## Where files go
 
