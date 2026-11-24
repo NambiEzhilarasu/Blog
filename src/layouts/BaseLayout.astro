@@ -7,7 +7,7 @@ interface Props {
 }
 
 const {
-  title = "Nambi Ezhilarasu — Technical Journal",
+  title = "Nambi Ezhilarasu — Articles",
   description = "Technical articles and notes by Nambi Ezhilarasu.",
 } = Astro.props;
 const currentPath = Astro.url.pathname;
@@ -36,10 +36,10 @@ const currentPath = Astro.url.pathname;
           <span class="wordmark-name">Nambi Ezhilarasu</span>
         </a>
         <nav class="site-nav" aria-label="Main navigation">
-          <a class:list={["nav-link", { active: currentPath === "/" }]} href="/">Journal</a>
+          <a class:list={["nav-link", { active: currentPath === "/" }]} href="/">Articles</a>
           <a class:list={["nav-link", { active: currentPath === "/about/" }]} href="/about/">About</a>
         </nav>
-        <span class="header-index">TECH JOURNAL <span class="status-dot"></span></span>
+        <span class="header-index">ARTICLES <span class="status-dot"></span></span>
       </header>
 
       <main>
@@ -48,7 +48,7 @@ const currentPath = Astro.url.pathname;
 
       <footer class="site-footer">
         <a class="footer-name" href="/">Nambi Ezhilarasu<span>.</span></a>
-        <span class="footer-note">Independent technical journal</span>
+        <span class="footer-note">Independent technical articles</span>
         <span class="footer-coordinates">VOL. 01</span>
       </footer>
     </div>

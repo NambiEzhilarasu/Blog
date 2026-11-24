@@ -21,7 +21,7 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
 
 <BaseLayout title={`${article.data.title} — Nambi Ezhilarasu`} description={article.data.description}>
   <article class="article-page">
-    <a class="back-link" href="/">← BACK TO JOURNAL</a>
+    <a class="back-link" href="/">← BACK TO ARTICLES</a>
     <header class="article-header">
       <p class="eyebrow"><span class="eyebrow-line"></span> {article.data.tags.join(" · ") || "ARTICLE"}</p>
       <h1>{article.data.title}</h1>

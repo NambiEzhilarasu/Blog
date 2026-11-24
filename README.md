@@ -1,4 +1,4 @@
-# Nambi Ezhilarasu — Technical Journal
+# Nambi Ezhilarasu — Articles
 
 An F1-inspired technical blog built with Astro. New posts are discovered
 automatically from Markdown files. **For each post, add a Markdown file and
