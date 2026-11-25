@@ -60,6 +60,12 @@ The homepage lists posts newest first. Astro creates each article page and
 updates the homepage from the files in `src/content/articles/` during the
 standard site build.
 
+## Feeds and search discovery
+
+The site publishes an RSS feed at `/rss.xml`, a sitemap at `/sitemap-index.xml`,
+and a `robots.txt` that points crawlers to the sitemap. New articles are
+included automatically during the next build.
+
 ## Preview locally
 
 Node.js `22.23.4` or newer is required. Install dependencies once, from the

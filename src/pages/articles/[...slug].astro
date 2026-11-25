@@ -12,6 +12,25 @@ export async function getStaticPaths() {
 
 const { article } = Astro.props;
 const { Content } = await render(article);
+const wordCount = article.body.trim().split(/\s+/u).filter(Boolean).length;
+const readingTime = Math.max(1, Math.ceil(wordCount / 220));
+const siteUrl = Astro.site ?? new URL("https://nambi-ezhilarasu.vercel.app");
+const ogImage = article.data.coverImage ?? "/images/articles/asil-a-hw-metrics.png";
+const articleJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: article.data.title,
+  description: article.data.description,
+  datePublished: article.data.publishedAt.toISOString(),
+  author: {
+    "@type": "Person",
+    name: "Nambi Ezhilarasu",
+    url: new URL("/about/", siteUrl).href,
+  },
+  image: new URL(ogImage, siteUrl).href,
+  mainEntityOfPage: new URL(Astro.url.pathname, siteUrl).href,
+  articleSection: article.data.tags,
+}).replace(/</g, "\\u003c");
 const dateFormatter = new Intl.DateTimeFormat("en", {
   day: "2-digit",
   month: "long",
@@ -19,12 +38,21 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
 });
 ---
 
-<BaseLayout title={`${article.data.title} — Nambi Ezhilarasu`} description={article.data.description}>
+<BaseLayout
+  title={`${article.data.title} - Nambi Ezhilarasu`}
+  description={article.data.description}
+  ogType="article"
+  image={ogImage}
+  imageAlt={article.data.coverImageAlt ?? article.data.title}
+  publishedAt={article.data.publishedAt}
+  structuredData={articleJsonLd}
+>
   <article class="article-page">
     <a class="back-link" href="/">← BACK TO ARTICLES</a>
     <header class="article-header">
       <p class="eyebrow"><span class="eyebrow-line"></span> {article.data.tags.join(" · ") || "ARTICLE"}</p>
       <h1>{article.data.title}</h1>
+      <p class="article-byline">By Nambi Ezhilarasu <span aria-hidden="true">·</span> {readingTime} min read</p>
       <p class="article-lede">{article.data.description}</p>
       <time datetime={article.data.publishedAt.toISOString()}>
         {dateFormatter.format(article.data.publishedAt)}
@@ -47,8 +75,14 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
         <button class="comment-submit" type="submit">Post comment</button>
         <p class="comment-form-status" id="comment-form-status" role="status" aria-live="polite"></p>
       </form>
+      <p class="comments-note">Comments are public after posting and may be reviewed or removed by the site owner.</p>
       <div class="comment-list" id="comment-list" aria-live="polite"></div>
-      <noscript><p class="comments-not-configured">Enable JavaScript to load and post comments.</p></noscript>
+      <noscript>
+        <p class="comments-not-configured">
+          JavaScript is required to post a comment. For questions, contact{" "}
+          <a href="https://www.linkedin.com/in/nambi-ezhilarasu-2928421b3/">Nambi Ezhilarasu on LinkedIn</a>.
+        </p>
+      </noscript>
     </section>
   </article>
 </BaseLayout>
@@ -78,6 +112,14 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
   const commentList = document.querySelector<HTMLElement>("#comment-list");
   const commentStatus = document.querySelector<HTMLElement>("#comment-form-status");
   const articleSlug = commentsSection?.dataset.article;
+
+  async function readJsonResponse<T>(response: Response, errorMessage: string): Promise<T> {
+    try {
+      return (await response.json()) as T;
+    } catch {
+      throw new Error(errorMessage);
+    }
+  }
 
   function displayDate(value: string): string {
     const date = new Date(value);
@@ -133,7 +175,10 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
       const response = await fetch(`/api/comments?article=${encodeURIComponent(articleSlug)}`, {
         headers: { Accept: "application/json" },
       });
-      const result = (await response.json()) as CommentsResponse;
+      const result = await readJsonResponse<CommentsResponse>(
+        response,
+        "Comments could not be loaded. Please try again later.",
+      );
       if (!response.ok) {
         throw new Error(result.error || "Comments could not be loaded.");
       }
@@ -177,7 +222,10 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
           website: String(formData.get("website") ?? ""),
         }),
       });
-      const result = (await response.json()) as { error?: string };
+      const result = await readJsonResponse<{ error?: string }>(
+        response,
+        "Your comment could not be posted. Please try again later.",
+      );
       if (!response.ok) {
         throw new Error(result.error || "Your comment could not be posted.");
       }

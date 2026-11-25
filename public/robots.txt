@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://nambi-ezhilarasu.vercel.app/sitemap-index.xml

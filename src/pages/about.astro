@@ -1,20 +1,48 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+
+const linkedInUrl = "https://www.linkedin.com/in/nambi-ezhilarasu-2928421b3/";
+// TODO: Replace this placeholder with the preferred public contact address.
+const contactEmail = "your-email@example.com";
+const siteUrl = Astro.site ?? new URL("https://nambi-ezhilarasu.vercel.app");
+const personJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Nambi Ezhilarasu",
+  jobTitle: "Functional Safety Engineer",
+  description:
+    "Functional Safety Engineer working on ISO 26262 and ASPICE in automotive, with earlier experience in HIL validation and vehicle validation.",
+  url: new URL("/about/", siteUrl).href,
+  sameAs: [linkedInUrl],
+  worksFor: {
+    "@type": "Organization",
+    name: "Drivvize",
+  },
+}).replace(/</g, "\\u003c");
 ---
 
-<BaseLayout title="About — Nambi Ezhilarasu">
+<BaseLayout
+  title="About Nambi Ezhilarasu - Functional Safety Engineer"
+  description="About Nambi Ezhilarasu, Functional Safety Engineer. Career timeline across HIL validation, vehicle validation and ISO 26262 functional safety."
+  structuredData={personJsonLd}
+>
   <section class="simple-page about-page">
     <p class="eyebrow"><span class="eyebrow-line"></span> CAREER TIMELINE</p>
     <h1>Nambi Ezhilarasu<span>.</span></h1>
-    <p class="about-intro">I write about Functional Safety, ASPICE and Automotive R&amp;D.</p>
+    <p class="about-intro">
+      I'm a Functional Safety Engineer working on ISO 26262 and ASPICE in automotive. My earlier work covered HIL
+      validation, BEV vehicle validation and HEV functional safety.
+    </p>
     <p class="about-links">
-      <a href="https://www.linkedin.com/in/nambi-ezhilarasu-2928421b3/" target="_blank" rel="noopener noreferrer">
+      <a href={linkedInUrl} target="_blank" rel="noopener noreferrer">
         LinkedIn <span aria-hidden="true">↗</span>
       </a>
+      <a href={`mailto:${contactEmail}`}>Email</a>
     </p>
+    <!-- TODO: Replace the placeholder contact email above. -->
 
     <div class="timeline-heading">
-      <span>MY RACING LINE</span>
+      <h2>Career timeline</h2>
       <span>CAREER / 2023—NOW</span>
     </div>
 
@@ -28,9 +56,9 @@ import BaseLayout from "../layouts/BaseLayout.astro";
               <span aria-hidden="true">—</span>
               <time datetime="2024-05">MAY 2024</time>
             </p>
-            <span class="career-status">STINT 01</span>
+            <span class="career-status">ROLE 01</span>
           </div>
-          <h2>Tata Elxsi</h2>
+          <h3>Tata Elxsi</h3>
           <p class="career-role">HIL Validation Engineer</p>
         </article>
       </li>
@@ -44,9 +72,9 @@ import BaseLayout from "../layouts/BaseLayout.astro";
               <span aria-hidden="true">—</span>
               <time datetime="2025-05">MAY 2025</time>
             </p>
-            <span class="career-status">STINT 02</span>
+            <span class="career-status">ROLE 02</span>
           </div>
-          <h2>Mahindra &amp; Mahindra Ltd.</h2>
+          <h3>Mahindra &amp; Mahindra Ltd.</h3>
           <p class="career-employer-note">Deputed by Tata Elxsi</p>
           <div class="career-roles">
             <p><span>BEV</span> Vehicle Validation Engineer</p>
@@ -64,9 +92,9 @@ import BaseLayout from "../layouts/BaseLayout.astro";
               <span aria-hidden="true">—</span>
               <span>PRESENT</span>
             </p>
-            <span class="career-status">CURRENT STINT</span>
+            <span class="career-status">CURRENT ROLE</span>
           </div>
-          <h2>Drivvize</h2>
+          <h3>Drivvize</h3>
           <p class="career-role">Functional Safety Engineer</p>
         </article>
       </li>

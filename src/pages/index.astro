@@ -12,7 +12,10 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
 });
 ---
 
-<BaseLayout>
+<BaseLayout
+  title="Nambi Ezhilarasu - Functional Safety and Automotive Articles"
+  description="Articles and notes on Functional Safety, ISO 26262, ASPICE and automotive R&D by Nambi Ezhilarasu."
+>
   <section class="hero">
     <div class="hero-copy">
       <p class="eyebrow"><span class="eyebrow-line"></span> ARTICLES <span class="eyebrow-year">— VOL. 01</span></p>
@@ -25,13 +28,15 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
       <div class="hero-art-ring ring-three"></div>
       <div class="hero-art-center">NE<span>.</span></div>
       <span class="hero-art-label label-top">FIELD NOTES / 01</span>
-      <span class="hero-art-label label-bottom">ENGINEERING · SYSTEMS · IDEAS</span>
+      <span class="hero-art-label label-bottom">Functional Safety · ISO 26262 · ASPICE · Automotive</span>
       <span class="hero-art-cross cross-one">+</span>
       <span class="hero-art-cross cross-two">+</span>
     </div>
     <div class="hero-bottom">
       <span>WRITTEN BY <strong>NAMBI EZHILARASU</strong></span>
-      <span class="scroll-hint"><span class="scroll-line"></span> SCROLL TO EXPLORE</span>
+      {articles.length > 3 && (
+        <span class="scroll-hint"><span class="scroll-line"></span> SCROLL TO EXPLORE</span>
+      )}
     </div>
   </section>
 
